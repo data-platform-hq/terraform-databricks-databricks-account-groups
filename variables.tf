@@ -1,4 +1,4 @@
-variable "acc_level_groups" {
+variable "groups" {
   type = list(object({
     name              = string
     users             = optional(set(string))
