@@ -14,7 +14,7 @@ terraform {
   required_providers {
     databricks = {
       source  = "databricks/databricks"
-      version = ">=1.16.0"
+      version = ">=1.14.2"
     }
   }
 }
@@ -26,16 +26,16 @@ provider "databricks" {
   account_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
 }
 ```
-Pay attention that this module does not allow to create groups and immediately add
-them to the Workspace so these two actions must be done in two successive deployments.
-
-Here is an example of using this module to create a group:
+Here is an example of using this module to create groups and how to pass parameters
+to assign these groups to a Workspace:
 ```hcl
-# Databricks account groups creation
+
 module "databricks_account_groups" {
   providers = {
     databricks = databricks.manager
   }
+
+  # Databricks account groups creation
   groups = groups = [{
     name              = "test_group1"
     users             = ["user_name1@email.com", "user_name2@email.com"]
@@ -44,17 +44,8 @@ module "databricks_account_groups" {
     name  = "test_group2"
     users = ["user_name1@email.com", "user_name3@email.com"]
   }]
-}
-```
 
-And this example shows how to pass parameters to assigning groups to the Workspace:
-```hcl
-# Databricks account groups assignment
-module "ws_group_assignment" {
-  providers = {
-    databricks = databricks.manager
-  }
-
+  # Databricks account groups assignment
   workspace                  = "databricks_workspace_id"
   workspace_group_assignment = [{
     principal_id = "test_group1"
@@ -69,13 +60,13 @@ module "ws_group_assignment" {
 | Name                                                                         | Version   |
 | ---------------------------------------------------------------------------- | --------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform)    | >= 1.0.0  |
-| <a name="requirement_databricks"></a> [databricks](#requirement\_databricks) | >= 1.16.0 |
+| <a name="requirement_databricks"></a> [databricks](#requirement\_databricks) | >= 1.14.2 |
 
 ## Providers
 
 | Name                                                                   | Version |
 | ---------------------------------------------------------------------- | ------- |
-| <a name="provider_databricks"></a> [databricks](#provider\_databricks) | 1.16.0  |
+| <a name="provider_databricks"></a> [databricks](#provider\_databricks) | 1.14.2  |
 
 ## Modules
 
