@@ -1,66 +1,69 @@
 locals {
-  users = flatten([for group in var.groups : [for user in coalesce(group.users, []) : {
-    name = group.name
-    user = user
-    } if group.users != null
-  ]])
-  users_as_map = { for user_object in local.users : "${user_object.name}:${user_object.user}" => user_object }
+  # Creates maps of sets where key is in form like "user:<group_name>:<user_name>" and value is set of two elements,
+  # first element is a group name and second is user name
+  users_map = {
+    for pair in [
+      for group in var.groups : flatten(setproduct([group.name], group.users))
+      if alltrue([group.name != null, group.users != null])
+    ] : "user:${pair[0]}:${pair[1]}" => pair
+  }
 
-  service_principals = flatten([for group in var.groups : [for sp in coalesce(group.service_principal, []) : {
-    name              = group.name
-    service_principal = sp
-    } if group.service_principal != null
-  ]])
-  service_principals_as_map = { for sp_object in local.service_principals : "${sp_object.name}:${sp_object.service_principal}" => sp_object }
+  # Creates maps of sets where key is in form like "sp:<group_name>:<user_name>" and value is set of two elements,
+  # first element is a group name and second is service principal name
+  service_principals_map = {
+    for pair in [
+      for group in var.groups : flatten(setproduct([group.name], group.service_principals))
+      if alltrue([group.name != null, group.service_principals != null])
+    ] : "sp:${pair[0]}:${pair[1]}" => pair
+  }
 }
 
+# Reference to already existing User in Databricks Account
 data "databricks_user" "this" {
-  for_each = local.users_as_map
+  for_each = local.users_map
 
-  user_name = each.value.user
+  user_name = each.value[1]
 }
 
+# Reference to already existing Service Principal in Databricks Account
 data "databricks_service_principal" "this" {
-  for_each = local.service_principals_as_map
+  for_each = local.service_principals_map
 
-  application_id = each.value.service_principal
+  application_id = each.value[1]
 }
 
-data "databricks_group" "existing" {
-  for_each = { for group in var.workspace_group_assignment : group.principal_id => group }
-
-  display_name = each.key
-}
-
+# Creates group in Databricks Account
 resource "databricks_group" "this" {
-  for_each = toset(var.groups[*].name)
+  for_each = toset(compact(var.groups[*].name))
 
   display_name = each.key
   lifecycle { ignore_changes = [external_id, allow_cluster_create, allow_instance_pool_create, databricks_sql_access, workspace_access] }
 }
 
-# Assignment Databricks users as members of the group
-resource "databricks_group_member" "user" {
-  for_each = local.users_as_map
+# Adds Users and Service Principals to associated Databricks Account group
+resource "databricks_group_member" "this" {
+  for_each = merge(local.users_map, local.service_principals_map)
 
-  group_id  = databricks_group.this[each.value.name].id
-  member_id = data.databricks_user.this[each.key].id
-
+  group_id  = databricks_group.this[each.value[0]].id
+  member_id = startswith(each.key, "user") ? data.databricks_user.this[each.key].id : data.databricks_service_principal.this[each.key].id
 }
 
-# Assignment Databricks service principals as members of the group
-resource "databricks_group_member" "service_principal" {
-  for_each = local.service_principals_as_map
+# References already existing or newly created groups in Databricks Account.
+data "databricks_group" "this" {
+  for_each = toset(compact(var.workspace_group_assignment[*].principal_name))
 
-  group_id  = databricks_group.this[each.value.name].id
-  member_id = data.databricks_service_principal.this[each.key].id
+  display_name = each.value
+  depends_on   = [databricks_group.this]
 }
 
-# Adding account level group to a workspace in account context
+# Assigning Databricks Account group to Databricks Workspace
 resource "databricks_mws_permission_assignment" "this" {
-  for_each = { for group in var.workspace_group_assignment : group.principal_id => group }
+  for_each = {
+    for group in var.workspace_group_assignment : group.principal_name => group
+    if group.principal_name != null
+  }
 
-  workspace_id = var.workspace
-  principal_id = data.databricks_group.existing[each.key].id
+  workspace_id = var.workspace_id
+  principal_id = data.databricks_group.this[each.key].id
   permissions  = each.value.permissions
 }
