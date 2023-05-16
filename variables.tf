@@ -24,9 +24,9 @@ variable "workspace_group_assignment" {
 
   validation {
     condition = length(var.workspace_group_assignment) != 0 ? alltrue([
-      for item in toset(flatten(
-        var.workspace_group_assignment[*].permissions)) : contains(["USER", "ADMIN"], item) if item != null
+      for item in toset(flatten(var.workspace_group_assignment[*].permissions)) : contains(["USER", "ADMIN"], item)
+      if item != null
     ]) : true
-    error_message = "Error"
+    error_message = "Please provide either 'USER' or 'ADMIN' permission level for Account group on Workspace"
   }
 }
