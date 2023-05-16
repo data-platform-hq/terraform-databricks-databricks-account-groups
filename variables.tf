@@ -16,8 +16,8 @@ variable "workspace_id" {
 
 variable "workspace_group_assignment" {
   type = list(object({
-    principal_name = optional(string),
-    permissions    = optional(list(string))
+    group_name  = optional(string),
+    permissions = optional(list(string))
   }))
   description = "List of objects with group name and list of workspace permissions (USER or ADMIN) to assign to this group"
   default     = []

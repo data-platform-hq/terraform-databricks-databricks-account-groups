@@ -50,7 +50,7 @@ resource "databricks_group_member" "this" {
 
 # References already existing or newly created groups in Databricks Account.
 data "databricks_group" "this" {
-  for_each = toset(compact(var.workspace_group_assignment[*].principal_name))
+  for_each = toset(compact(var.workspace_group_assignment[*].group_name))
 
   display_name = each.value
   depends_on   = [databricks_group.this]
@@ -59,8 +59,8 @@ data "databricks_group" "this" {
 # Assigning Databricks Account group to Databricks Workspace
 resource "databricks_mws_permission_assignment" "this" {
   for_each = {
-    for group in var.workspace_group_assignment : group.principal_name => group
-    if group.principal_name != null
+    for group in var.workspace_group_assignment : group.group_name => group
+    if group.group_name != null
   }
 
   workspace_id = var.workspace_id
