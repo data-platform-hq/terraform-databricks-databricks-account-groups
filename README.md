@@ -82,7 +82,7 @@ No modules.
 
 | Name                                                                                                                                                       | Type     |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| [databricks_user.this"](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/sql_global_config)                             | data     |
+| [databricks_user.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/sql_global_config)                              | data     |
 | [databricks_service_principal.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/data-sources/service_principal)              | data     |
 | [databricks_group.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/group)                                         | resource |
 | [databricks_group_member.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/group_member)                           | resource |
