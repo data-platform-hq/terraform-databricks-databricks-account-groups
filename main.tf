@@ -1,20 +1,24 @@
 locals {
-  # Creates maps of sets where key is in form like "user:<group_name>:<user_name>" and value is set of two elements,
+  # Creates maps of objects where key is in form like "user:<group_name>:<user_name>" and value is objects of two parameters,
   # first element is a group name and second is user name
   users_map = {
-    for pair in [
-      for group in var.groups : flatten(setproduct([group.name], group.users))
-      if alltrue([group.name != null, group.users != null])
-    ] : "user:${pair[0]}:${pair[1]}" => pair
+    for object in flatten([
+      for group in var.groups : [
+        for pair in setproduct([group.name], group.users) : {
+          name = pair[0], user = pair[1]
+      }] if alltrue([group.name != null, group.users != null])
+    ]) : "user:${object.name}:${object.user}" => object
   }
 
-  # Creates maps of sets where key is in form like "sp:<group_name>:<user_name>" and value is set of two elements,
+  # Creates maps of objects where key is in form like "sp:<group_name>:<user_name>" and value is object of two parameters,
   # first element is a group name and second is service principal name
   service_principals_map = {
-    for pair in [
-      for group in var.groups : flatten(setproduct([group.name], group.service_principals))
-      if alltrue([group.name != null, group.service_principals != null])
-    ] : "sp:${pair[0]}:${pair[1]}" => pair
+    for object in flatten([
+      for group in var.groups : [
+        for pair in setproduct([group.name], group.service_principals) : {
+          name = pair[0], service_principal = pair[1]
+      }] if alltrue([group.name != null, group.service_principals != null])
+    ]) : "sp:${object.name}:${object.service_principal}" => object
   }
 }
 
@@ -22,14 +26,14 @@ locals {
 data "databricks_user" "this" {
   for_each = local.users_map
 
-  user_name = each.value[1]
+  user_name = each.value.user
 }
 
 # Reference to already existing Service Principal in Databricks Account
 data "databricks_service_principal" "this" {
   for_each = local.service_principals_map
 
-  application_id = each.value[1]
+  application_id = each.value.service_principal
 }
 
 # Creates group in Databricks Account
@@ -44,7 +48,7 @@ resource "databricks_group" "this" {
 resource "databricks_group_member" "this" {
   for_each = merge(local.users_map, local.service_principals_map)
 
-  group_id  = databricks_group.this[each.value[0]].id
+  group_id  = databricks_group.this[each.value.name].id
   member_id = startswith(each.key, "user") ? data.databricks_user.this[each.key].id : data.databricks_service_principal.this[each.key].id
 }
 
