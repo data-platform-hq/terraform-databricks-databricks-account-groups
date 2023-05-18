@@ -1,5 +1,5 @@
 # Databricks Account Groups Terraform module
-Terraform module for creation Databricks Account Groups and assignment them
+Terraform module for creation Databricks Account Groups and assignments 
 to the Databricks Premium Workspace
 
 ## Usage
