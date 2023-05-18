@@ -42,9 +42,9 @@ module "databricks_account_groups" {
 
   # Databricks Account groups creation
   groups = [{
-    name              = "test_group1"
-    users             = ["user_name1@email.com", "user_name2@email.com"]
-    service_principal = ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+    name               = "test_group1"
+    users              = ["user_name1@email.com", "user_name2@email.com"]
+    service_principals = ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
     }, {
     name  = "test_group2"
     users = ["user_name1@email.com", "user_name3@email.com"]
@@ -54,11 +54,11 @@ module "databricks_account_groups" {
   workspace_id = data.azurerm_databricks_workspace.example.id
   
   workspace_group_assignment = [{
-    principal_id = "test_group1"
-    permissions  = ["ADMIN"]
+    group_name  = "test_group1"
+    permissions = ["ADMIN"]
     }, {
-    principal_id = "test_group2",
-    permissions  = ["USER"]
+    group_name  = "test_group2",
+    permissions = ["USER"]
   }]
 }
 ```
