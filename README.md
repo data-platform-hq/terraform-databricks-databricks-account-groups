@@ -3,11 +3,10 @@ Terraform module for creation Databricks Account Groups and assignment them
 to the Databricks Premium Workspace
 
 ## Usage
-Current module allows you to create groups in the Databricks account, add users 
-and service principals as a members of those groups. This module also allows to
-add account groups to the Databricks Workspace.
-In order to operate at the account level the following required_providers block
-should be added:
+Current module allows you to create groups in the Databricks Account, add users and service principals as a members of those groups. 
+This module also provides an ability to assign just created or already existing Account Groups to the Databricks Workspace.
+
+In order to operate at the Account level the following required_providers block should be configured first:
 
 ```hcl
 terraform {
@@ -23,20 +22,26 @@ provider "databricks" {
   alias = "manager"
 
   host       = "https://accounts.azuredatabricks.net"
+  
+  # Databricks Account UUID
   account_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
 }
 ```
-Here is an example of using this module to create groups and how to pass parameters
-to assign these groups to a Workspace:
+
+Here is an example of using this module to create Account Groups and then assign them to the Workspace:
 ```hcl
+data "azurerm_databricks_workspace" "example" {
+  name                = "example-workspace"
+  resource_group_name = "example-rg"
+}
 
 module "databricks_account_groups" {
   providers = {
     databricks = databricks.manager
   }
 
-  # Databricks account groups creation
-  groups = groups = [{
+  # Databricks Account groups creation
+  groups = [{
     name              = "test_group1"
     users             = ["user_name1@email.com", "user_name2@email.com"]
     service_principal = ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
@@ -45,8 +50,9 @@ module "databricks_account_groups" {
     users = ["user_name1@email.com", "user_name3@email.com"]
   }]
 
-  # Databricks account groups assignment
-  workspace                  = "databricks_workspace_id"
+  # Databricks Account groups assignment to certain Workspace
+  workspace_id = data.azurerm_databricks_workspace.example.id
+  
   workspace_group_assignment = [{
     principal_id = "test_group1"
     permissions  = ["ADMIN"]
@@ -87,8 +93,8 @@ No modules.
 
 | Name                                                                                                                 | Description                                                                                               | Type                                                                                                                                                          | Default | Required |
 | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | :------: |
-| <a name="input_groups"></a> [groups](#input\_groups)                                                                 | The ID of the Databricks workspace to which account groups should be assigned                             | <pre>list(object({<br>  name              = string<br>  users             = optional(set(string))<br>  service_principal = optional(set(string))<br>}))</pre> | []      |    no    |
-| <a name="input_workspace_id"></a> [workspace\_id](#input\_workspace\_id)                                             | The ID of the Databricks workspace to which account groups should be assigned                             | `string`                                                                                                                                                      | "null"  |    no    |
+| <a name="input_groups"></a> [groups](#input\_groups)                                                                 | List of objects with these parameters -  group names to create, sets of users and/or service principals assigned to these groups                             | <pre>list(object({<br>  name              = string<br>  users             = optional(set(string))<br>  service_principal = optional(set(string))<br>}))</pre> | []      |    no    |
+| <a name="input_workspace_id"></a> [workspace\_id](#input\_workspace\_id)                                             | The ID of the Databricks Workspace to which Account groups should be assigned                             | `string`                                                                                                                                                      | "null"  |    no    |
 | <a name="input_workspace_group_assignment"></a> [workspace\_group\_assignment](#input\_workspace\_group\_assignment) | List of objects with group name and list of workspace permissions (USER or ADMIN) to assign to this group | <pre>list(object({<br>  principal_id = optional(string),<br>  permissions  = optional(list(string))<br>}))</pre>                                              | []      |    no    |
 
 ## Outputs
