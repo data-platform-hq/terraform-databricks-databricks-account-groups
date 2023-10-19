@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/data-platform-hq/terraform-databricks-databricks-account-groups/compare/v1.0.0...v1.0.1) (2023-10-19)
+
+
+### Bug Fixes
+
+* fmt ([64d1954](https://github.com/data-platform-hq/terraform-databricks-databricks-account-groups/commit/64d19544b677f0548a45a2b6b7162c96fba4308d))
+* ignore principal_id ([dc7f262](https://github.com/data-platform-hq/terraform-databricks-databricks-account-groups/commit/dc7f262644902d5d2ec6008726a482c52323fdad))
+
 # 1.0.0 (2023-05-18)
 
 
