@@ -70,4 +70,8 @@ resource "databricks_mws_permission_assignment" "this" {
   workspace_id = var.workspace_id
   principal_id = data.databricks_group.this[each.key].id
   permissions  = each.value.permissions
+
+  lifecycle {
+    ignore_changes = [principal_id]
+  }
 }
