@@ -62,7 +62,7 @@ module "databricks_account_groups" {
   }]
 }
 ```
-
+<!-- BEGIN_TF_DOCS -->
 | Name                                                                         | Version   |
 | ---------------------------------------------------------------------------- | --------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform)    | >= 1.0.0  |
