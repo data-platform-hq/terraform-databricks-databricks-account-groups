@@ -62,17 +62,19 @@ module "databricks_account_groups" {
   }]
 }
 ```
+<!-- BEGIN_TF_DOCS -->
+## Requirements
 
-| Name                                                                         | Version   |
-| ---------------------------------------------------------------------------- | --------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform)    | >= 1.0.0  |
-| <a name="requirement_databricks"></a> [databricks](#requirement\_databricks) | >= 1.14.2 |
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.0.0 |
+| <a name="requirement_databricks"></a> [databricks](#requirement\_databricks) | >=1.14.2 |
 
 ## Providers
 
-| Name                                                                   | Version |
-| ---------------------------------------------------------------------- | ------- |
-| <a name="provider_databricks"></a> [databricks](#provider\_databricks) | 1.14.2  |
+| Name | Version |
+|------|---------|
+| <a name="provider_databricks"></a> [databricks](#provider\_databricks) | >=1.14.2 |
 
 ## Modules
 
@@ -80,22 +82,22 @@ No modules.
 
 ## Resources
 
-| Name                                                                                                                                                       | Type     |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| [databricks_user.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/sql_global_config)                              | data     |
-| [databricks_service_principal.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/data-sources/service_principal)              | data     |
-| [databricks_group.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/group)                                         | resource |
-| [databricks_group_member.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/group_member)                           | resource |
-| [databricks_group.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/data-sources/group)                                      | data     |
+| Name | Type |
+|------|------|
+| [databricks_group.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/group) | resource |
+| [databricks_group_member.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/group_member) | resource |
 | [databricks_mws_permission_assignment.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/mws_permission_assignment) | resource |
+| [databricks_group.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/data-sources/group) | data source |
+| [databricks_service_principal.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/data-sources/service_principal) | data source |
+| [databricks_user.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/data-sources/user) | data source |
 
 ## Inputs
 
-| Name                                                                                                                 | Description                                                                                               | Type                                                                                                                                                          | Default | Required |
-| -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | :------: |
-| <a name="input_groups"></a> [groups](#input\_groups)                                                                 | List of objects with these parameters -  group names to create, sets of users and/or service principals assigned to these groups                             | <pre>list(object({<br>  name               = optional(string)<br>  users              = optional(set(string))<br>  service_principals = optional(set(string))<br>}))</pre> | []      |    no    |
-| <a name="input_workspace_id"></a> [workspace\_id](#input\_workspace\_id)                                             | The ID of the Databricks Workspace to which Account groups should be assigned                             | `string`                                                                                                                                                      | "null"  |    no    |
-| <a name="input_workspace_group_assignment"></a> [workspace\_group\_assignment](#input\_workspace\_group\_assignment) | List of objects with group name and list of workspace permissions (USER or ADMIN) to assign to this group | <pre>list(object({<br>  group_name  = optional(string),<br>  permissions = optional(list(string))<br>}))</pre>                                              | []      |    no    |
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_groups"></a> [groups](#input\_groups) | List of objects with these parameters -  group names to create, sets of users and/or service principals assigned to these groups | <pre>list(object({<br>    name               = optional(string)<br>    users              = optional(set(string))<br>    service_principals = optional(set(string))<br>  }))</pre> | `[]` | no |
+| <a name="input_workspace_group_assignment"></a> [workspace\_group\_assignment](#input\_workspace\_group\_assignment) | List of objects with group name and list of workspace permissions (USER or ADMIN) to assign to this group | <pre>list(object({<br>    group_name  = optional(string),<br>    permissions = optional(list(string))<br>  }))</pre> | `[]` | no |
+| <a name="input_workspace_id"></a> [workspace\_id](#input\_workspace\_id) | The ID of the Databricks Workspace where Databricks Account group would be assigned | `string` | `null` | no |
 
 ## Outputs
 
