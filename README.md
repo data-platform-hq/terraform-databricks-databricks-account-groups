@@ -67,14 +67,14 @@ module "databricks_account_groups" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.0.0 |
-| <a name="requirement_databricks"></a> [databricks](#requirement\_databricks) | >=1.14.2 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_databricks"></a> [databricks](#requirement\_databricks) | ~> 1.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_databricks"></a> [databricks](#provider\_databricks) | >=1.14.2 |
+| <a name="provider_databricks"></a> [databricks](#provider\_databricks) | ~> 1.0 |
 
 ## Modules
 
@@ -95,8 +95,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_groups"></a> [groups](#input\_groups) | List of objects with these parameters -  group names to create, sets of users and/or service principals assigned to these groups | <pre>list(object({<br>    name               = optional(string)<br>    users              = optional(set(string))<br>    service_principals = optional(set(string))<br>  }))</pre> | `[]` | no |
-| <a name="input_workspace_group_assignment"></a> [workspace\_group\_assignment](#input\_workspace\_group\_assignment) | List of objects with group name and list of workspace permissions (USER or ADMIN) to assign to this group | <pre>list(object({<br>    group_name  = optional(string),<br>    permissions = optional(list(string))<br>  }))</pre> | `[]` | no |
+| <a name="input_groups"></a> [groups](#input\_groups) | List of objects with these parameters -  group names to create, sets of users and/or service principals assigned to these groups | <pre>list(object({<br/>    name               = optional(string)<br/>    users              = optional(set(string))<br/>    service_principals = optional(set(string))<br/>  }))</pre> | `[]` | no |
+| <a name="input_workspace_group_assignment"></a> [workspace\_group\_assignment](#input\_workspace\_group\_assignment) | List of objects with group name and list of workspace permissions (USER or ADMIN) to assign to this group | <pre>list(object({<br/>    group_name  = optional(string),<br/>    permissions = optional(list(string))<br/>  }))</pre> | `[]` | no |
 | <a name="input_workspace_id"></a> [workspace\_id](#input\_workspace\_id) | The ID of the Databricks Workspace where Databricks Account group would be assigned | `string` | `null` | no |
 
 ## Outputs
